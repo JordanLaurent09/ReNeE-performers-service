@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Country } from "./performer.country";
 
 @Entity()
 export class Performer {
@@ -13,8 +14,8 @@ export class Performer {
     genre: string;
 
     @Column()
-    country: string;
+    country: Country;
 
     @Column()
-    birthday: Date;
+    image: string;
 }
