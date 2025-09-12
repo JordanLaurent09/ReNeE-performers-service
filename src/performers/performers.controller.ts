@@ -7,6 +7,7 @@ import { DeleteResult, UpdateResult } from 'typeorm';
 import { UpdatePerformersDto } from './dtos/update-performers-dto';
 
 
+
 @Controller('/performers')
 export class PerformersController {
   constructor(private readonly performersService: PerformersService) {}
@@ -14,6 +15,12 @@ export class PerformersController {
   @Get('/all')
   public async GetAllPerformers(): Promise<Performer[]> {
     return await this.performersService.GetAllPerformers();
+  }
+
+  @Get('/favorites/:indexes')
+  public async GetFavoritesPerformers(@Param('indexes') indexes: string): Promise<Performer[]> {
+     const ids: number[] = JSON.parse(indexes);
+     return await this.performersService.GetFavoritesPerformers(ids);
   }
 
   @Get('/id/:id')

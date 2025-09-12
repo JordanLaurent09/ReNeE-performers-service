@@ -6,6 +6,7 @@ import { CreatePerformersDto } from './dtos/create-performers-dto';
 import { Country } from './entities/performer.country';
 import { UpdatePerformersDto } from './dtos/update-performers-dto';
 
+
 @Injectable()
 export class PerformersService {
     constructor(
@@ -21,6 +22,20 @@ export class PerformersService {
         const newPerformer = this.performerRepository.create(data);
         this.performerRepository.save(newPerformer);
         return newPerformer;
+    }
+
+    public async GetFavoritesPerformers(indexes: number[]): Promise<Performer[]> {
+        const performers = [];
+        
+        for (let i = 0; i < indexes.length; i++) {
+            const performer = await this.performerRepository.findOne({
+                where: {
+                    id: indexes[i]
+                }
+            });
+            performers.push(performer);
+        }
+        return performers;
     }
 
     public async GetPerformerById(id: number): Promise<Performer> {
