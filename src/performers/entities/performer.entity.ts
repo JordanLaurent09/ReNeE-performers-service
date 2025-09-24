@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { Country } from "./performer.country";
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Album } from "src/albums/entities/album.entity";
+import { Song } from "src/songs/entities/song.entity";
 
 @Entity()
 export class Performer {
@@ -14,8 +15,14 @@ export class Performer {
     genre: string;
 
     @Column()
-    country: Country;
+    country: string;
 
-    @Column()
+    @OneToMany(() => Song, song => song.performer)
+    songs: Song[];
+
+    @OneToMany(() => Album, album => album.performer)
+    albums: Album[];
+
+    @Column({ type: 'mediumtext' })
     image: string;
 }
