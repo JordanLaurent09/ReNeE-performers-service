@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { PerformersModule } from './performers/performers.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AlbumsModule } from './albums/albums.module';
+import { SongsModule } from './songs/songs.module';
 
 @Module({
   imports: [
@@ -16,7 +18,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       autoLoadEntities: true,
       synchronize: true
     }),
-    PerformersModule
+    PerformersModule,
+    AlbumsModule,
+    SongsModule
   ],
   controllers: [],
   providers: [],
