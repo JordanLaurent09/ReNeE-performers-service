@@ -1,5 +1,4 @@
-import { IsEnum, IsString } from "class-validator";
-import { Country } from "../entities/performer.country";
+import { IsString } from "class-validator";
 
 export class CreatePerformersDto {
 
@@ -8,8 +7,8 @@ export class CreatePerformersDto {
 
     genre: string;
 
-    @IsEnum(Country)
-    country: Country;
+    @IsString()
+    country: string;
 
     @IsString()
     image: string;
