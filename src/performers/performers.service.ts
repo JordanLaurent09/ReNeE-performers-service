@@ -3,15 +3,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Performer } from './entities/performer.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { CreatePerformersDto } from './dtos/create-performers-dto';
-import { Country } from './entities/performer.country';
 import { UpdatePerformersDto } from './dtos/update-performers-dto';
+//import { Album } from 'src/albums/entities/album.entity';
+//import { Song } from 'src/songs/entities/song.entity';
 
 
 @Injectable()
 export class PerformersService {
     constructor(
-        @InjectRepository(Performer)
-        private readonly performerRepository: Repository<Performer>
+        @InjectRepository(Performer) private readonly performerRepository: Repository<Performer>,
+        //@InjectRepository(Album) private readonly albumRepository: Repository<Album>,
+        //@InjectRepository(Song) private readonly songRepository: Repository<Song>,
     ) { }
 
     public async GetAllPerformers(): Promise<Performer[]> {
@@ -25,6 +27,7 @@ export class PerformersService {
     }
 
     public async GetFavoritesPerformers(indexes: number[]): Promise<Performer[]> {
+        if (indexes.length == 0) return [];
         const performers = [];
         
         for (let i = 0; i < indexes.length; i++) {
@@ -33,6 +36,7 @@ export class PerformersService {
                     id: indexes[i]
                 }
             });
+            if (!performer) continue;
             performers.push(performer);
         }
         return performers;
@@ -55,7 +59,7 @@ export class PerformersService {
         return performer;
     }
 
-    public async GetPerformersByCountry(country: Country): Promise<Performer[]> {
+    public async GetPerformersByCountry(country: string): Promise<Performer[]> {
         return await this.performerRepository.findBy({
             country: country
         });
@@ -66,6 +70,17 @@ export class PerformersService {
             genre: genre
         });
     }
+
+    // Получение альбомов и песен исполнителя
+    /* public async GetPerformersAlbums(performerId: number): Promise<Album[]> {
+        const performer = await this.performerRepository.findOne({
+            where: {
+                id: performerId
+            }
+        });
+
+        return performer.albums;
+    } */
 
     public async DeletePerformerById(id: number): Promise<DeleteResult> {
         return await this.performerRepository.delete(id);

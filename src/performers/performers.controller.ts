@@ -2,7 +2,6 @@ import { Body, Controller, Post, Get, Delete, UsePipes, ValidationPipe, Param, P
 import { PerformersService } from './performers.service';
 import { CreatePerformersDto } from './dtos/create-performers-dto';
 import { Performer } from './entities/performer.entity';
-import { Country } from './entities/performer.country';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { UpdatePerformersDto } from './dtos/update-performers-dto';
 
@@ -34,7 +33,7 @@ export class PerformersController {
   }
 
   @Get('/country/:country')
-  public async GetPerformersByCountry(@Param('country') country: Country): Promise<Performer[]> {
+  public async GetPerformersByCountry(@Param('country') country: string): Promise<Performer[]> {
     return await this.performersService.GetPerformersByCountry(country);
   }
 
