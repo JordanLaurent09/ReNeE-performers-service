@@ -4,9 +4,17 @@ import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import { join } from 'path';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true
+    })
+  )
 
   const config = new DocumentBuilder()
     .setTitle('Renee Performers API')
