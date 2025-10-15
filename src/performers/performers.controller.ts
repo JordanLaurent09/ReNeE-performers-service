@@ -1,10 +1,11 @@
-import { Body, Controller, Post, Get, Delete, UsePipes, ValidationPipe, Param, Patch, Put } from '@nestjs/common';
+import { Body, Controller, Post, Get, Delete, UsePipes, ValidationPipe, Param, Patch, Put, InternalServerErrorException, ParseIntPipe } from '@nestjs/common';
 import { PerformersService } from './performers.service';
 import { CreatePerformersDto } from './dtos/create-performers-dto';
 import { Performer } from './entities/performer.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { UpdatePerformersDto } from './dtos/update-performers-dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ParseIntArrayPipe } from './pipes/parseIntArrayPipe';
 
 
 @ApiTags('performers')
@@ -24,7 +25,7 @@ export class PerformersController {
     }
     catch(error: any)
     {
-      return [];
+      throw new InternalServerErrorException("Произошла ошибка сервера");
     }
   }
     
@@ -35,18 +36,15 @@ export class PerformersController {
   @ApiResponse({ status: 200, description: "Список успешно получен" })
   @ApiResponse({ status: 404, description: "Избранные исполнители не найдены"})
   @ApiResponse({ status: 500, description: "Ошибка сервера"})
-  public async GetFavoritesPerformers(@Param('indexes') indexes: string): Promise<Performer[]> {
+  public async GetFavoritesPerformers(@Param('indexes', new ParseIntArrayPipe()) indexes: number[]): Promise<Performer[]> {
     
     try {
-      const ids: number[] = JSON.parse(indexes);
-      const performers: Performer[] = await this.performersService.GetFavoritesPerformers(ids);
+      const performers: Performer[] = await this.performersService.GetFavoritesPerformers(indexes);
       return performers;
     }
     catch(error: any) {
       return [];
-    }
-
-    
+    }  
   }
 
   @Get('/id/:id')
@@ -54,7 +52,7 @@ export class PerformersController {
   @ApiResponse({ status: 200, description: "Исполнитель успешно получен" })
   @ApiResponse({ status: 404, description: "Исполнитель не найден"})
   @ApiResponse({ status: 500, description: "Ошибка сервера"})
-  public async GetPerformerById(@Param('id') id: number): Promise<Performer> {
+  public async GetPerformerById(@Param('id', new ParseIntPipe()) id: number): Promise<Performer> {
 
     try {
       const performer: Performer = await this.performersService.GetPerformerById(id);
@@ -65,8 +63,7 @@ export class PerformersController {
     }
     catch(error: any) {
       return new Performer();
-    }
-   
+    } 
   }
 
   @Get('/name/:name')
@@ -157,6 +154,7 @@ export class PerformersController {
   @ApiResponse({ status: 200, description: "Исполнитель успешно обновлен частично" })
   @ApiResponse({ status: 404, description: "Исполнитель не найден"})
   @ApiResponse({ status: 500, description: "Ошибка сервера"})
+  @UsePipes(new ValidationPipe())
   public async UpdatePerformerPartial(@Param('id') id: number, @Body() updatePerformerPartialDto: UpdatePerformersDto): Promise<UpdateResult> {
     const result: UpdateResult = await this.performersService.UpdatePerformerPartial(id, updatePerformerPartialDto);
     return result;

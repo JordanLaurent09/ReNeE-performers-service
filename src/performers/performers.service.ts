@@ -79,7 +79,11 @@ export class PerformersService {
     } */
 
     public async DeletePerformerById(id: number): Promise<DeleteResult> {
-        return await this.performerRepository.delete(id);
+        const result: DeleteResult = await this.performerRepository.delete(id);
+        if (result) {
+            return result;
+        }
+        return new DeleteResult();
     }
 
     public async UpdatePerformerPartial(id: number, data: UpdatePerformersDto): Promise<UpdateResult> {
